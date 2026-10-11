@@ -1,0 +1,14 @@
+# Segredos e dados sensíveis — nunca versionar
+db.key
+secret.key
+absenteismo.db
+backups/
+*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+dados/

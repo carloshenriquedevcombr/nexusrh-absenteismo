@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar · Absenteísmo · Empresa Exemplo{% endblock %}
+{% block body_class %}pagina-login{% endblock %}
+{% block corpo %}
+<main class="login-wrap">
+  <form class="login-card" method="post" autocomplete="on">
+    <div class="marca marca-login">Absenteísmo<span>Empresa Exemplo</span></div>
+
+    {% if primeiro_acesso %}
+      <h2>Primeiro acesso</h2>
+      <p class="sub">Crie a conta de desenvolvedor (acesso total). Depois disso, os demais usuários são cadastrados dentro do sistema.</p>
+    {% else %}
+      <h2>Entrar</h2>
+      <p class="sub">Use seu usuário e senha para acessar o painel.</p>
+    {% endif %}
+
+    {% if conta_criada %}<div class="alerta alerta-ok">Conta criada. Agora faça login.</div>{% endif %}
+    {% if erro %}<div class="alerta alerta-erro">{{ erro }}</div>{% endif %}
+
+    {% if primeiro_acesso %}
+      <label>Nome completo<input name="nome_completo" required autocomplete="name"></label>
+    {% endif %}
+    <label>Usuário<input name="username" required autocomplete="username" autofocus></label>
+    <label>Senha
+      <span class="campo-senha">
+        <input name="password" type="password" required
+               {% if primeiro_acesso %}minlength="{{ senha_min_caracteres }}" autocomplete="new-password"{% else %}autocomplete="current-password"{% endif %}>
+        <button type="button" class="mostrar-senha" aria-label="Mostrar senha">👁</button>
+      </span>
+    </label>
+    {% if primeiro_acesso %}
+      <label>Confirmar senha<input name="password_confirm" type="password" required minlength="{{ senha_min_caracteres }}" autocomplete="new-password"></label>
+      <p class="dica">Mínimo de {{ senha_min_caracteres }} caracteres.</p>
+    {% endif %}
+
+    <button class="btn btn-primario btn-largo" type="submit">{{ "Criar conta" if primeiro_acesso else "Entrar" }}</button>
+  </form>
+</main>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}

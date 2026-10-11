@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ session.get('csrf_token', '') }}">
+  <title>{% block titulo %}Absenteísmo · Empresa Exemplo{% endblock %}</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% block corpo %}
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="marca">Absenteísmo<span>Empresa Exemplo</span></div>
+
+    <div class="usuario-card">
+      <strong>{{ usuario.nome_completo }}</strong>
+      <span class="cargo cargo-{{ usuario.cargo }}">{{ usuario.cargo_rotulo }}</span>
+    </div>
+
+    {% block sidebar %}{% endblock %}
+
+    <a class="btn btn-sair" href="{{ url_for('logout') }}">Sair</a>
+  </aside>
+  <div class="sidebar-fundo" id="sidebar-fundo"></div>
+
+  <main class="conteudo">
+    <header class="topo">
+      <button class="btn-menu" id="btn-menu" aria-label="Abrir menu">☰</button>
+      <h1>{% block cabecalho %}{% endblock %}</h1>
+    </header>
+    {% block conteudo %}{% endblock %}
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

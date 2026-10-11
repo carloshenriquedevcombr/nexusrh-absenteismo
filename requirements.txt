@@ -1,0 +1,6 @@
+Flask
+pandas
+openpyxl
+argon2-cffi
+sqlcipher3-wheels
+gunicorn

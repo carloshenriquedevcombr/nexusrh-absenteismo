@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block head %}
+<script src="{{ url_for('static', filename='js/vendor/chart.umd.js') }}" defer></script>
+{% endblock %}
+{% block cabecalho %}Dashboard de Absenteísmo{% endblock %}
+
+{% block sidebar %}
+<section class="painel">
+  <h3>Filtros</h3>
+  <label>Meses<select id="filtro-meses" multiple size="4"></select></label>
+  <label>Colaboradores<select id="filtro-colaboradores" multiple size="6"></select></label>
+  <button class="btn btn-secundario btn-largo" id="btn-limpar-filtros" type="button">Limpar filtros</button>
+  <p class="dica">Ctrl/⌘ + clique para escolher vários.</p>
+</section>
+
+<section class="painel">
+  <h3>Atualização de dados</h3>
+  <form id="form-importar">
+    <input type="file" id="arquivo" name="arquivo" accept=".xlsx" required>
+    <button class="btn btn-primario btn-largo" type="submit">Importar planilha</button>
+  </form>
+  <p class="dica" id="ultima-importacao"></p>
+</section>
+
+<section class="painel">
+  <h3>Backup</h3>
+  <button class="btn btn-secundario btn-largo" id="btn-backup" type="button">Criar backup agora</button>
+  <ul class="lista-backups" id="lista-backups"></ul>
+</section>
+
+{% if pode_administrar %}
+<section class="painel">
+  <h3>Gerenciar usuários</h3>
+  <form id="form-usuario" class="form-compacto">
+    <input name="nome_completo" placeholder="Nome completo" required>
+    <input name="username" placeholder="Usuário (login)" required autocomplete="off">
+    <input name="password" type="password" placeholder="Senha (mín. {{ senha_min_caracteres }})" minlength="{{ senha_min_caracteres }}" required autocomplete="new-password">
+    <select name="cargo">
+      {% for c in cargos_criaveis %}<option value="{{ c }}" {% if c == 'usuario' %}selected{% endif %}>{{ cargo_rotulo[c] }}</option>{% endfor %}
+    </select>
+    <button class="btn btn-primario btn-largo" type="submit">Criar usuário</button>
+  </form>
+  <ul class="lista-usuarios" id="lista-usuarios"></ul>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block conteudo %}
+<div id="aviso-importacao" class="alerta alerta-info escondido"></div>
+<div id="estado-vazio" class="vazio escondido">
+  Nenhum dado para os filtros escolhidos. Envie a planilha em <strong>Atualização de dados</strong>.
+</div>
+
+<div id="painel-dados">
+  <div class="kpis">
+    <div class="kpi destaque"><span>% Absenteísmo geral</span><strong id="kpi-percentual">—</strong><small>horas ausentes ÷ horas previstas</small></div>
+    <div class="kpi"><span>Horas ausentes</span><strong id="kpi-horas">—</strong><small>no período filtrado</small></div>
+    <div class="kpi"><span>Faltas e atestados</span><strong id="kpi-registros">—</strong><small>dias registrados</small></div>
+    <div class="kpi"><span>Maior índice</span><strong id="kpi-critico" class="kpi-nome">—</strong><small id="kpi-critico-valor"></small></div>
+  </div>
+
+  <div class="graficos">
+    <div class="cartao grafico-largo"><h3>Evolução mensal</h3><div class="area-grafico"><canvas id="grafico-evolucao"></canvas></div></div>
+    <div class="cartao"><h3>Motivos de ausência</h3><div class="area-grafico"><canvas id="grafico-motivos"></canvas></div></div>
+    <div class="cartao grafico-largo"><h3>Horas ausentes por colaborador (top 15)</h3><div class="area-grafico alta"><canvas id="grafico-colaboradores"></canvas></div></div>
+  </div>
+
+  <div class="cartao">
+    <h3>Detalhamento</h3>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr>
+          <th>Colaborador</th><th>Mês</th><th class="num">Dias trab.</th><th class="num">H. previstas</th>
+          <th class="num">H. trabalhadas</th><th class="num">H. ausente</th><th class="num">% Abs.</th>
+        </tr></thead>
+        <tbody id="tabela-corpo"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>window.USUARIO_ID = {{ usuario.id | tojson }};</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+{% endblock %}

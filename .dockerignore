@@ -1,0 +1,12 @@
+.git
+.env
+dados/
+backups/
+db.key
+secret.key
+*.db
+*.xlsx
+__pycache__/
+*.pyc
+.venv/
+venv/

@@ -1,0 +1,25 @@
+# Sobe o sistema na VPS atrás do Nginx Proxy Manager.
+# O proxy encaminha absenteismo.exemplo.com.br -> http://Absenteismo:8501,
+# então o container precisa se chamar "Absenteismo" e estar na mesma rede
+# Docker do Nginx Proxy Manager (ajuste PROXY_NETWORK no .env).
+services:
+  absenteismo:
+    build: .
+    container_name: Absenteismo
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ABSENTEISMO_DATA_DIR: /app/dados
+      ABSENTEISMO_HTTPS: "1"
+      ABSENTEISMO_ATRAS_DE_PROXY: "1"
+    volumes:
+      - ./dados:/app/dados
+    expose:
+      - "8501"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-npm_default}
